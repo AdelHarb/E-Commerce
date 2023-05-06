@@ -1,1 +1,1 @@
-# This is simple E-Commerce using .Net WebApi
+# This is a simple E-Commerce using .Net WebApi
