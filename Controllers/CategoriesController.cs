@@ -13,7 +13,7 @@ public class CategoriesController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet("{id}", Name = "GetById")]
     public async Task<IActionResult> GetById(int id)
     {
         if (_unitOfWork.Categories.GetByIdAsync(id) is not null)
@@ -25,7 +25,7 @@ public class CategoriesController : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("GetByName")]
+    [HttpGet("{name}", Name = "GetByName")]
     public async Task<IActionResult> GetByName(string name)
     {
         if (string.IsNullOrEmpty(name))
@@ -58,7 +58,7 @@ public class CategoriesController : ControllerBase
 
         return Ok(category);
     }
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id)
     {
         var category = await _unitOfWork.Categories.GetByIdAsync(id);
@@ -70,7 +70,7 @@ public class CategoriesController : ControllerBase
 
         return Ok(category);
     }
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var category = await _unitOfWork.Categories.GetByIdAsync(id);
@@ -79,6 +79,16 @@ public class CategoriesController : ControllerBase
         
         _unitOfWork.Categories.Delete(category);
         _unitOfWork.Complete();
+
+        return Ok(category);
+    }
+    [HttpGet("GetCategoryByProductId")]
+    public async Task<IActionResult> GetCategoryByProductId(int id)
+    {
+        var category = await _unitOfWork.Categories.FindAsync(
+            x => x.Products.Any(x => x.Id == id),
+            new string[] { Includes.Product }
+        );
 
         return Ok(category);
     }

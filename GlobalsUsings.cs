@@ -12,6 +12,6 @@ global using System.Linq.Expressions;
 global using ECommerce.SD;
 global using AutoMapper;
 global using ECommerce.Dtos.CategoryDtos;
-// global using ECommerce.Dtos.ProductDtos;
+global using ECommerce.Dtos.ProductDtos;
 // global;
 // global;

@@ -97,7 +97,21 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
         return await query.FirstOrDefaultAsync(predicate);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync() => await _context.Set<T>().ToListAsync();
+    public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null)
+    {
+        IQueryable<T> query = _context.Set<T>();
+
+        if(includes is not null)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return await query.ToListAsync();
+        }
+        return Enumerable.Empty<T>();
+    }
+
 
     public async Task<T> GetByIdAsync(int id) => await _context.Set<T>().FindAsync(id);
 
