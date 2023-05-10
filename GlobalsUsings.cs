@@ -13,5 +13,10 @@ global using ECommerce.SD;
 global using AutoMapper;
 global using ECommerce.Dtos.CategoryDtos;
 global using ECommerce.Dtos.ProductDtos;
-// global;
-// global;
+global using ECommerce.Services;
+global using ECommerce.Dtos.AuthDtos;
+global  using System.ComponentModel.DataAnnotations;
+// global
+// global
+// global
+// global

@@ -19,6 +19,7 @@ public class ProductsController : ControllerBase
 
         return Ok(categories);
     }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProductReadDto dto)
     {
@@ -31,6 +32,7 @@ public class ProductsController : ControllerBase
 
         return Ok(product);
     }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -44,6 +46,7 @@ public class ProductsController : ControllerBase
 
         return Ok(product);
     }
+
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {

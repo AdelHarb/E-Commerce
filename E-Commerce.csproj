@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="autoMapper" Version="12.0.1" />
     <PackageReference Include="autoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="microsoft.aspnetcore.authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
     <PackageReference Include="microsoft.EntityFrameworkCore" Version="7.0.5" />
@@ -24,6 +25,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="system.identitymodel.tokens.jwt" Version="6.30.0" />
   </ItemGroup>
 
 </Project>
