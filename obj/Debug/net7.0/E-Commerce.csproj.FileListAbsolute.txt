@@ -82,3 +82,4 @@ E:\Summer2022\Learning_Coding\Adel\E-Commerce\obj\Debug\net7.0\refint\E-Commerce
 E:\Summer2022\Learning_Coding\Adel\E-Commerce\obj\Debug\net7.0\E-Commerce.pdb
 E:\Summer2022\Learning_Coding\Adel\E-Commerce\obj\Debug\net7.0\E-Commerce.genruntimeconfig.cache
 E:\Summer2022\Learning_Coding\Adel\E-Commerce\obj\Debug\net7.0\ref\E-Commerce.dll
+E:\Summer2022\Learning_Coding\Adel\E-Commerce\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

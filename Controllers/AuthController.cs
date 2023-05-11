@@ -24,8 +24,11 @@ public class AuthController : ControllerBase
         if(result.isAuthenticated is not true)
             return BadRequest(result.Messages);
         
+        SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+        
         return Ok(result);
     }
+    
     [HttpPost("Login")]
     public async Task<IActionResult> LogIn([FromBody] LoginDto logInDto)
     {
@@ -37,8 +40,12 @@ public class AuthController : ControllerBase
         if(result.isAuthenticated is not true)
             return BadRequest(result.Messages);
         
+        if(!string.IsNullOrEmpty(result.RefreshToken))
+            SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+        
         return Ok(result);
     }
+    
     [HttpPost("AddRoleToUser")]
     [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> AddRoleToUser([FromBody] AddRoleToUserDto addRoleToUserDto)
@@ -52,5 +59,46 @@ public class AuthController : ControllerBase
             return BadRequest(result);
         
         return Ok(result);
+    }
+    
+    [HttpGet("RefreshToken")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        var result = await _authService.RefreshTokenAsync(refreshToken);
+
+        if(result.isAuthenticated is not true)
+            return BadRequest(result);
+        
+        SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+
+        return Ok(result);
+    }
+
+    
+    [HttpPost("RevokeToken")]
+    public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto revokeToken)
+    {
+        var token = revokeToken.Token ?? Request.Cookies["refreshToken"];
+        
+        if(string.IsNullOrEmpty(token) is not true)
+            return BadRequest("Token is Required");
+        
+        var result = await _authService.RevokeTokenAsync(token);
+
+        if(result is not true)
+            return BadRequest("Invalid Token");
+        
+        return Ok();
+    }
+    
+    private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = expires.ToLocalTime(),
+        };
+        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
 }

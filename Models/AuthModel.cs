@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ECommerce.Models
 {
     public class AuthModel
@@ -9,5 +11,9 @@ namespace ECommerce.Models
         public List<string> Roles { get; set; }
         public string Token { get; set; }
         public DateTime ExpiresOn { get; set; }
+        [JsonIgnore]
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiration { get; set; } 
+
     }
 }
