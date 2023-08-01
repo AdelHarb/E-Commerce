@@ -27,7 +27,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
         return entities;
     }
 
-    public Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+    public Task<int> CountAsync(Expression<Func<T, bool>> predicate = null!)
     {
         if(predicate is null)
             return _context.Set<T>().CountAsync();

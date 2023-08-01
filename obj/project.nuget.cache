@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2vGPRLtpDRVXiwrDmg8eJI/DwH8WjA1qgfEXqjgEoaDeyoewVcz+NeirMDnI0zvKYZ25HXdNdKjI/hxs3LE8sQ==",
+  "dgSpecHash": "04wO+GRr7uCN+n8U1LaPmhWF2n2fiif+/6Yu25rGk8c8zp6K3/VXWckH9irCl0C/RVb7oqIgPcwcy4AhBzyiXg==",
   "success": true,
-  "projectFilePath": "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
+  "projectFilePath": "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Adel\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Adel\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

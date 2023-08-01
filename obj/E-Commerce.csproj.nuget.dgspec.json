@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj": {}
+    "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj": {}
   },
   "projects": {
-    "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj": {
+    "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
+        "projectUniqueName": "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
         "projectName": "E-Commerce",
-        "projectPath": "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
+        "projectPath": "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\E-Commerce.csproj",
         "packagesPath": "C:\\Users\\Adel\\.nuget\\packages\\",
-        "outputPath": "E:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\obj\\",
+        "outputPath": "e:\\Summer2022\\Learning_Coding\\Adel\\E-Commerce\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Adel\\AppData\\Roaming\\NuGet\\NuGet.Config",

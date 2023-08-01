@@ -15,8 +15,12 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly JWT _jwt;
 
-    public AuthService(UserManager<ApplicationUser> userManager, IMapper mapper, IOptions<JWT> jwt,
-        RoleManager<IdentityRole> roleManager)
+    public AuthService(
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper,
+        IOptions<JWT> jwt,
+        RoleManager<IdentityRole> roleManager
+    )
     {
         _userManager = userManager;
         _mapper = mapper;
@@ -28,19 +32,18 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByIdAsync(addRoleToUserDto.UserId);
 
-        if(user is null)
+        if (user is null)
             return "User not found";
-        
-        if(await _roleManager.RoleExistsAsync(addRoleToUserDto.Role) is not true)
+
+        if (await _roleManager.RoleExistsAsync(addRoleToUserDto.Role) is not true)
             return "Role not found";
-        
-        if(await _userManager.IsInRoleAsync(user, addRoleToUserDto.Role))
+
+        if (await _userManager.IsInRoleAsync(user, addRoleToUserDto.Role))
             return "User already has this role";
-        
+
         var result = await _userManager.AddToRoleAsync(user, addRoleToUserDto.Role);
 
-        return result.Succeeded ? string.Empty : "Something went wrong";    
-
+        return result.Succeeded ? string.Empty : "Something went wrong";
     }
 
     public async Task<AuthModel> LoginAsync(LoginDto loginDto)
@@ -55,14 +58,14 @@ public class AuthService : IAuthService
             return authModel;
         }
 
-        authModel.isAuthenticated = true;
+        authModel.IsAuthenticated = true;
         authModel.Token = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user));
         authModel.Email = user.Email;
         authModel.Username = user.UserName;
         authModel.Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().ToList();
         authModel.ExpiresOn = DateTime.Now.AddDays(_jwt.DurationInDays);
 
-        if(user.RefreshTokens.Any(t => t.IsActive))
+        if (user.RefreshTokens.Any(t => t.IsActive))
         {
             var activeRefreshToken = user.RefreshTokens.Where(t => t.IsActive).FirstOrDefault();
             authModel.RefreshToken = activeRefreshToken.Token;
@@ -77,23 +80,23 @@ public class AuthService : IAuthService
             user.RefreshTokens.Add(refreshToken);
             await _userManager.UpdateAsync(user);
         }
-        
+
         return authModel;
     }
 
     public async Task<AuthModel> RegisterAsync(RegisterDto registerDto)
     {
-        if(await _userManager.FindByEmailAsync(registerDto.Email) is not null)
+        if (await _userManager.FindByEmailAsync(registerDto.Email) is not null)
             return new AuthModel { Messages = "Email already registered" };
-        
-        if(await _userManager.FindByNameAsync(registerDto.UserName) is not null)
+
+        if (await _userManager.FindByNameAsync(registerDto.UserName) is not null)
             return new AuthModel { Messages = "Username already registered" };
-        
+
         var user = _mapper.Map<ApplicationUser>(registerDto);
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-        if(result.Succeeded is not true)
+        if (result.Succeeded is not true)
         {
             var errors = string.Empty;
 
@@ -111,7 +114,7 @@ public class AuthService : IAuthService
         {
             Email = user.Email,
             ExpiresOn = jwtSecurityToken.ValidTo,
-            isAuthenticated = true,
+            IsAuthenticated = true,
             Roles = new List<string> { Roles.User },
             Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
             Username = user.UserName,
@@ -124,54 +127,60 @@ public class AuthService : IAuthService
     {
         var authModel = new AuthModel();
 
-        var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+        var user = await _userManager.Users.SingleOrDefaultAsync(
+            u => u.RefreshTokens.Any(t => t.Token == token)
+        );
 
-        if(user == null)
+        if (user == null)
         {
             authModel.Messages = "Invalid Token";
             return authModel;
         }
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
-            if(!refreshToken.IsActive)
-            {
-                authModel.Messages = "Inactive Token";
-                return authModel;
-            }
-            refreshToken.RevokedOn = DateTime.UtcNow;
-
-            var newRefreshToken = GenerateRefreshToken();
-            user.RefreshTokens.Add(newRefreshToken);
-            await _userManager.UpdateAsync(user);
-
-            var jwtToken = await CreateJwtToken(user);
-
-            authModel.isAuthenticated = true;
-            authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            authModel.Email = user.Email;
-            authModel.Username = user.UserName;
-            authModel.Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().ToList();
-            authModel.ExpiresOn = DateTime.Now.AddDays(_jwt.DurationInDays);
-            authModel.RefreshToken = newRefreshToken.Token;
-            authModel.RefreshTokenExpiration = newRefreshToken.ExpiresOn;
-
+        var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+        if (!refreshToken.IsActive)
+        {
+            authModel.Messages = "Inactive Token";
             return authModel;
+        }
+        refreshToken.RevokedOn = DateTime.UtcNow;
+
+        var newRefreshToken = GenerateRefreshToken();
+        user.RefreshTokens.Add(newRefreshToken);
+        await _userManager.UpdateAsync(user);
+
+        var jwtToken = await CreateJwtToken(user);
+
+        authModel.IsAuthenticated = true;
+        authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        authModel.Email = user.Email;
+        authModel.Username = user.UserName;
+        authModel.Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().ToList();
+        authModel.ExpiresOn = DateTime.Now.AddDays(_jwt.DurationInDays);
+        authModel.RefreshToken = newRefreshToken.Token;
+        authModel.RefreshTokenExpiration = newRefreshToken.ExpiresOn;
+
+        return authModel;
     }
+
     public async Task<bool> RevokeTokenAsync(string token)
     {
-        var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+        var user = await _userManager.Users.SingleOrDefaultAsync(
+            u => u.RefreshTokens.Any(t => t.Token == token)
+        );
 
-        if(user is null)
+        if (user is null)
             return false;
-        
+
         var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
 
-        if(!refreshToken.IsActive)
+        if (!refreshToken.IsActive)
             return false;
 
         refreshToken.RevokedOn = DateTime.UtcNow;
         await _userManager.UpdateAsync(user);
         return true;
     }
+
     private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);
@@ -188,18 +197,22 @@ public class AuthService : IAuthService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim("uid", user.Id)
         }
-        .Union(userClaims)
-        .Union(roleClaims);
+            .Union(userClaims)
+            .Union(roleClaims);
 
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));
-        var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+        var signingCredentials = new SigningCredentials(
+            symmetricSecurityKey,
+            SecurityAlgorithms.HmacSha256
+        );
 
         var jwtSecurityToken = new JwtSecurityToken(
             issuer: _jwt.Issuer,
             audience: _jwt.Audience,
             claims: claims,
             expires: DateTime.Now.AddDays(_jwt.DurationInDays),
-            signingCredentials: signingCredentials);
+            signingCredentials: signingCredentials
+        );
 
         return jwtSecurityToken;
     }

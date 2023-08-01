@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
         
         var result = await _authService.RegisterAsync(registerDto);
 
-        if(result.isAuthenticated is not true)
+        if(result.IsAuthenticated is not true)
             return BadRequest(result.Messages);
         
         SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
@@ -37,7 +37,7 @@ public class AuthController : ControllerBase
         
         var result = await _authService.LoginAsync(logInDto);
 
-        if(result.isAuthenticated is not true)
+        if(result.IsAuthenticated is not true)
             return BadRequest(result.Messages);
         
         if(!string.IsNullOrEmpty(result.RefreshToken))
@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
         var refreshToken = Request.Cookies["refreshToken"];
         var result = await _authService.RefreshTokenAsync(refreshToken);
 
-        if(result.isAuthenticated is not true)
+        if(result.IsAuthenticated is not true)
             return BadRequest(result);
         
         SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
