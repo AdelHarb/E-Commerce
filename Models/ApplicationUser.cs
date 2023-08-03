@@ -6,10 +6,12 @@ namespace ECommerce.Models
     {
         public string FirstName {get;set;} = string.Empty;
         public string LastName {get;set;} = string.Empty;
-        public string Address {get;set;} = string.Empty;
-         public byte[] ProfilePicture {get;set;} = null!;
+        public IEnumerable<string> Address {get;set;} = new List<string>();
+        public string Code { get; set; } = string.Empty;
+        // public byte[] ProfilePicture {get;set;} = null!;
         public List<RefreshToken>? RefreshTokens { get; set; }
         public List<Order> Orders {get; set;} = new List<Order>();
+        public IEnumerable<Review> Reviews { get; set; } = null!;
         public IEnumerable<UserProductsCart> UsersProductsCarts { get; set; } = new HashSet<UserProductsCart>();
     }
 }

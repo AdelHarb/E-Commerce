@@ -5,6 +5,7 @@ using ECommerce.Helpers;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using ECommerce.Services.Email;
 
 namespace ECommerce.Services;
 
@@ -12,6 +13,7 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IMailingService _mailingService;
     private readonly IMapper _mapper;
     private readonly JWT _jwt;
 
@@ -19,13 +21,15 @@ public class AuthService : IAuthService
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
         IOptions<JWT> jwt,
-        RoleManager<IdentityRole> roleManager
+        RoleManager<IdentityRole> roleManager,
+        IMailingService mailingService
     )
     {
         _userManager = userManager;
         _mapper = mapper;
         _jwt = jwt.Value;
         _roleManager = roleManager;
+        _mailingService = mailingService;
     }
 
     public async Task<string> AddRoleToUserAsync(AddRoleToUserDto addRoleToUserDto)
@@ -123,6 +127,91 @@ public class AuthService : IAuthService
         };
     }
 
+    public async Task<AuthModel> ForgetPassword(string email)
+    {
+        var authModel = new AuthModel();
+        ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+
+        if(string.IsNullOrEmpty(email))
+        {
+            authModel.Messages = "Email is Invalid";
+            return authModel;
+        }
+        
+        if(user is null)
+        {
+            authModel.Messages = "Email Does not Exist";
+            return authModel;
+        }
+        user.Code = GenerateVerificationCode();
+
+        await _mailingService.SendEmailAsync(email, "Reset Password", $"Your Reset Code is {user.Code}");
+        authModel.Messages = "Reset Code Sent to your Email";
+        return authModel;
+    }
+    
+    public async Task<AuthModel> CheckCode(ConfirmationCodeDto confirmationCodeDto)
+    {
+        var authModel = new AuthModel();
+        ApplicationUser? user = await _userManager.FindByEmailAsync(confirmationCodeDto.Email);
+
+        if(user is null)
+        {
+            authModel.Messages = "Email Does not Exist";
+            return authModel;
+        }
+
+        if(user.Code != confirmationCodeDto.Code)
+        {
+            authModel.Messages = "Invalid Code";
+            return authModel;
+        }
+
+        authModel.Messages = "Code Verified";
+        return authModel;
+    }
+
+    public async Task<AuthModel> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        var authModel = new AuthModel();
+
+        if(string.IsNullOrEmpty(resetPasswordDto.Email))
+        {
+            authModel.Messages = "Invalid Email";
+            return authModel;
+        }
+        var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+        
+        if(user is null)
+        {
+            authModel.Messages = "Email does not Exist";
+            return authModel;
+        }
+        if(resetPasswordDto.NewPassword != resetPasswordDto.ConfirmPassword)
+        {
+            authModel.Messages = "Confirmed Password Doest not match the Password";
+            return authModel;
+        }
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ChangePasswordAsync(user, token,resetPasswordDto.NewPassword);
+
+        if(!result.Succeeded)
+        {
+            authModel.Messages = "Failed to reset Password";
+            return authModel;
+        }
+
+        authModel.Messages = "Password Has Been Rest";
+        return authModel;
+
+
+    }
+    public async Task<bool> SendEmail (MailRequestDto mailRequestDto)
+    {
+       var result = await _mailingService.SendEmailAsync(mailRequestDto.Email, mailRequestDto.Subject, mailRequestDto.Body);
+         return result;
+    }
+    
     public async Task<AuthModel> RefreshTokenAsync(string token)
     {
         var authModel = new AuthModel();
@@ -232,4 +321,11 @@ public class AuthService : IAuthService
             CreatedOn = DateTime.UtcNow
         };
     }
+
+    private string GenerateVerificationCode()
+    {
+        var random = new Random();
+        return random.Next(10000, 99999).ToString();
+    }
+
 }

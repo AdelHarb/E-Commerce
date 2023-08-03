@@ -45,6 +45,30 @@ public class AuthController : ControllerBase
         
         return Ok(result);
     }
+    [HttpPost]
+    [Route("ForgetPassword")]
+    public async Task<IActionResult> ForgetPassword([FromBody] string email)
+    {
+        return Ok();
+    }
+    [HttpPost]
+    [Route("CheckCode")]
+    public async Task<IActionResult> CheckCode([FromBody] ConfirmationCodeDto confirmationCodeDto)
+    {
+        return Ok();
+    }
+    [HttpPost]
+    [Route("ResetPassword")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        return Ok();
+    }
+    [HttpPost]
+    [Route("SendEmail")]
+    public async Task<IActionResult> SendEmail([FromBody] MailRequestDto changePasswordDto)
+    {
+        return Ok();
+    }
     
     [HttpPost("AddRoleToUser")]
     [Authorize(Roles = Roles.Admin)]

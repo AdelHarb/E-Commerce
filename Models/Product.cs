@@ -9,6 +9,7 @@ namespace ECommerce.Models
         public DateTime CreatedAt { get; set; }
         public decimal Discount { get; set; }
         public string Description { get; set; } = string.Empty;
+        public IEnumerable<Review> Reviews { get; set; } = null!;
 
         public IEnumerable<ProductCategory> ProductCategories { get; set; } = null!;
         public IEnumerable<UserProductsCart> UsersProductsCarts { get; set; } = new HashSet<UserProductsCart>();

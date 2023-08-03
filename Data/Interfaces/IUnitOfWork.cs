@@ -2,7 +2,11 @@ namespace ECommerce.Data.Interfaces;
 
 public interface IUnitOfWork : IDisposable  
 {
-    IBaseRepository<Category> Categories { get; }
-    IBaseRepository<Product> Products { get; }
+    // IProductRepository ProductRepository { get; }
+    // ICategoryRepository CategoryRepository { get; }
+    // IReviewRepository ReviewRepository { get; }
+    // IUserRepository UserRepository { get; }
+    // IOrderRepository OrderRepository { get; }
+    // IOrderProductDetailsRepository OrderProductDetailsRepository { get; }
     int Complete();
 }
